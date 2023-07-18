@@ -1,4 +1,4 @@
-package com.bank.bankservice.entity;
+package com.bank.bankservice.customer.entity;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

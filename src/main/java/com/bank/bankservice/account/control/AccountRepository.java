@@ -1,6 +1,6 @@
-package com.bank.bankservice.control;
+package com.bank.bankservice.account.control;
 
-import com.bank.bankservice.entity.Account;
+import com.bank.bankservice.account.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

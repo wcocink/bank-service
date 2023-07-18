@@ -1,5 +1,6 @@
-package com.bank.bankservice.entity;
+package com.bank.bankservice.account.entity;
 
+import com.bank.bankservice.customer.entity.Customer;
 import jakarta.persistence.*;
 import lombok.Data;
 

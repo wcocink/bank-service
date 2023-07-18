@@ -1,9 +1,9 @@
-package com.bank.bankservice.boundary;
+package com.bank.bankservice.bank.boundary;
 
-import com.bank.bankservice.control.AccountController;
-import com.bank.bankservice.control.CustomerController;
-import com.bank.bankservice.entity.CustomerRequest;
-import com.bank.bankservice.entity.CustomerResponse;
+import com.bank.bankservice.account.control.AccountController;
+import com.bank.bankservice.customer.control.CustomerController;
+import com.bank.bankservice.customer.entity.CustomerRequest;
+import com.bank.bankservice.customer.entity.CustomerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

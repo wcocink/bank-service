@@ -1,6 +1,8 @@
-package com.bank.bankservice.control;
+package com.bank.bankservice.account.control;
 
-import com.bank.bankservice.entity.*;
+import com.bank.bankservice.account.entity.Account;
+import com.bank.bankservice.customer.control.CustomerRepository;
+import com.bank.bankservice.customer.entity.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
