@@ -28,7 +28,7 @@ public class TransactionResource {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public void withdraw(@PathVariable String accountId, @RequestBody TransactionRequest transactionRequest) {
-        //transactionController.withdraw(accountId, transactionRequest);
+        transactionController.withdraw(accountId, transactionRequest);
     }
 
     @GetMapping(

@@ -4,12 +4,14 @@ import com.bank.bankservice.account.control.AccountRepository;
 import com.bank.bankservice.account.entity.Account;
 import com.bank.bankservice.customer.entity.CustomerResponse;
 import com.bank.bankservice.transaction.entity.Transaction;
+import com.bank.bankservice.transaction.entity.TransactionEnum;
 import com.bank.bankservice.transaction.entity.TransactionMapper;
 import com.bank.bankservice.transaction.entity.TransactionRequest;
 import com.bank.bankservice.transaction.entity.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,12 +31,14 @@ public class TransactionController {
     public void deposit(String accountId, TransactionRequest transactionRequest){
         Optional<Account> optionalAccount = Optional.of(accountRepository.getReferenceById(Long.valueOf(accountId)));
 
-        optionalAccount.get().setAmount(optionalAccount.get().getAmount().add(transactionRequest.getAmount()));
-        accountRepository.save(optionalAccount.get());
+        optionalAccount.get().setBalance(
+                optionalAccount.get().getBalance().add(transactionRequest.getAmount()));
+
+        this.updateAccount(optionalAccount.get());
 
         //TODO - send this to kafka to get consumed later
         Transaction transactionEntity = new Transaction();
-        transactionEntity.setTransactionType("DEPOSIT"); //TODO change to enum
+        transactionEntity.setTransactionType(TransactionEnum.DEPOSIT.getTransactionType());
         transactionEntity.setDate(LocalDateTime.now());
         transactionEntity.setAccount(optionalAccount.get());
         transactionEntity.setValue(transactionRequest.getAmount());
@@ -49,17 +53,39 @@ public class TransactionController {
     }
 
 
-//    public void withdraw(String accountId, TransactionRequest transactionRequest){
-//        Optional<Customer> optionalCustomer = Optional.of(customerRepository.getReferenceById(Long.valueOf(id)));
-//        if(optionalCustomer.isEmpty()){
-//            //todo
-//            System.out.println("jogar erro aqui");
-//        }
-//        Account accountEntity = new Account();
-//        accountEntity.setCustomer(optionalCustomer.get());
-//        accountEntity.setAmount(new BigDecimal(BigInteger.ZERO));
-//        accountRepository.save(accountEntity);
-//    }
+    public void withdraw(String accountId, TransactionRequest transactionRequest){
+        Optional<Account> optionalAccount = Optional.of(accountRepository.getReferenceById(Long.valueOf(accountId)));
+        if(optionalAccount.isEmpty()){
+            //todo
+            System.out.println("Throw error invalid account");
+        }
+        if(!hasEnoughBalance(optionalAccount.get().getBalance(), transactionRequest.getAmount())){
+            //todo
+            System.out.println("Throw error not enough balance");
+        }
+
+        optionalAccount.get().setBalance(
+                optionalAccount.get().getBalance().subtract(transactionRequest.getAmount()));
+
+        this.updateAccount(optionalAccount.get());
+
+        //TODO - send this to kafka to get consumed later
+        Transaction transactionEntity = new Transaction();
+        transactionEntity.setTransactionType(TransactionEnum.WITHDRAW.getTransactionType());
+        transactionEntity.setDate(LocalDateTime.now());
+        transactionEntity.setAccount(optionalAccount.get());
+        transactionEntity.setValue(transactionRequest.getAmount());
+
+        transactionRepository.save(transactionEntity);
+    }
+
+    private boolean hasEnoughBalance(BigDecimal accountBalance, BigDecimal withdrawAmount){
+        return accountBalance.subtract(withdrawAmount).compareTo(BigDecimal.ZERO) >= 0;
+    }
+
+    private void updateAccount(Account account){
+        accountRepository.save(account);
+    }
 
 
 }

@@ -25,7 +25,7 @@ public class Account {
     @GeneratedValue
     private Long id;
 
-    private BigDecimal amount;
+    private BigDecimal balance;
 
     @ManyToOne
     private Customer customer;

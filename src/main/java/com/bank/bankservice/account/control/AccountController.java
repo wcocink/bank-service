@@ -27,7 +27,7 @@ public class AccountController {
         }
         Account accountEntity = new Account();
         accountEntity.setCustomer(optionalCustomer.get());
-        accountEntity.setAmount(new BigDecimal(BigInteger.ZERO));
+        accountEntity.setBalance(new BigDecimal(BigInteger.ZERO));
         accountRepository.save(accountEntity);
     }
 }
