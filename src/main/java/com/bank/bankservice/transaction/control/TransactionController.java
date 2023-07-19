@@ -2,12 +2,9 @@ package com.bank.bankservice.transaction.control;
 
 import com.bank.bankservice.account.control.AccountRepository;
 import com.bank.bankservice.account.entity.Account;
-import com.bank.bankservice.customer.entity.CustomerResponse;
-import com.bank.bankservice.transaction.entity.Transaction;
-import com.bank.bankservice.transaction.entity.TransactionEnum;
-import com.bank.bankservice.transaction.entity.TransactionMapper;
-import com.bank.bankservice.transaction.entity.TransactionRequest;
-import com.bank.bankservice.transaction.entity.TransactionResponse;
+import com.bank.bankservice.account.exception.AccountException;
+import com.bank.bankservice.transaction.entity.*;
+import com.bank.bankservice.transaction.exception.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -47,33 +44,29 @@ public class TransactionController {
     }
 
     public List<TransactionResponse> getTransactions(String accountId){
-        Optional<Account> optionalAccount = Optional.of(accountRepository.getReferenceById(Long.valueOf(accountId)));
-
+        Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
         return transactionMapper.transactionEntityListToTransactionResponseList(transactionRepository.findByAccountId(optionalAccount.get().getId()));
     }
 
 
     public void withdraw(String accountId, TransactionRequest transactionRequest){
-        Optional<Account> optionalAccount = Optional.of(accountRepository.getReferenceById(Long.valueOf(accountId)));
-        if(optionalAccount.isEmpty()){
-            //todo
-            System.out.println("Throw error invalid account");
+        Optional<Account> account = accountRepository.findAccountById(Long.valueOf(accountId));
+        if(account.isEmpty()){
+            throw AccountException.accountNotFound();
         }
-        if(!hasEnoughBalance(optionalAccount.get().getBalance(), transactionRequest.getAmount())){
-            //todo
-            System.out.println("Throw error not enough balance");
+        if(!hasEnoughBalance(account.get().getBalance(), transactionRequest.getAmount())){
+            throw TransactionException.notEnoughBalance();
+
         }
+        account.get().setBalance(account.get().getBalance().subtract(transactionRequest.getAmount()));
 
-        optionalAccount.get().setBalance(
-                optionalAccount.get().getBalance().subtract(transactionRequest.getAmount()));
-
-        this.updateAccount(optionalAccount.get());
+        this.updateAccount(account.get());
 
         //TODO - send this to kafka to get consumed later
         Transaction transactionEntity = new Transaction();
         transactionEntity.setTransactionType(TransactionEnum.WITHDRAW.getTransactionType());
         transactionEntity.setDate(LocalDateTime.now());
-        transactionEntity.setAccount(optionalAccount.get());
+        transactionEntity.setAccount(account.get());
         transactionEntity.setValue(transactionRequest.getAmount());
 
         transactionRepository.save(transactionEntity);

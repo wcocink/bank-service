@@ -13,4 +13,5 @@ public interface CustomerMapper {
 
     List<CustomerResponse> customerEntityListToCustomerResponseList(List<Customer> customerList);
 
+
 }

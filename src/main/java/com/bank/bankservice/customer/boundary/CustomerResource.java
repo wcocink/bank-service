@@ -3,8 +3,11 @@ package com.bank.bankservice.customer.boundary;
 import com.bank.bankservice.customer.control.CustomerController;
 import com.bank.bankservice.customer.entity.CustomerRequest;
 import com.bank.bankservice.customer.entity.CustomerResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +31,7 @@ public class CustomerResource {
     @PostMapping(path = "customers",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public void createCustomer(@RequestBody CustomerRequest customerRequest) {
-        customerController.createCustomer(customerRequest);
+    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
+        return new ResponseEntity<>(customerController.createCustomer(customerRequest), HttpStatus.CREATED);
     }
 }

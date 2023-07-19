@@ -18,9 +18,10 @@ public class CustomerController {
     @Autowired
     CustomerMapper customerMapper;
 
-    public void createCustomer(CustomerRequest customerRequest){
+    public CustomerResponse createCustomer(CustomerRequest customerRequest){
         Customer customer = customerMapper.customerRequestToCustomerEntity(customerRequest);
         customerRepository.save(customer);
+        return customerMapper.customerEntityToCustomerResponse(customer);
     }
 
     public List<CustomerResponse> getCustomers(){
