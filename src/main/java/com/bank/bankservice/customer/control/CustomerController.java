@@ -7,6 +7,8 @@ import com.bank.bankservice.customer.entity.CustomerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
+
 @Controller
 public class CustomerController {
 
@@ -17,12 +19,12 @@ public class CustomerController {
     CustomerMapper customerMapper;
 
     public void createCustomer(CustomerRequest customerRequest){
-        Customer customer = customerMapper.MAPPER.customerRequestToCustomerEntity(customerRequest);
+        Customer customer = customerMapper.customerRequestToCustomerEntity(customerRequest);
         customerRepository.save(customer);
     }
 
-    public CustomerResponse getCustomers(){
-        return customerMapper.MAPPER.customerEntityToCustomerResponse(customerRepository.getReferenceById(1L));
+    public List<CustomerResponse> getCustomers(){
+        return customerMapper.customerEntityListToCustomerResponseList(customerRepository.findAll());
     }
 
 }

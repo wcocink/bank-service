@@ -1,6 +1,5 @@
-package com.bank.bankservice.bank.boundary;
+package com.bank.bankservice.customer.boundary;
 
-import com.bank.bankservice.account.control.AccountController;
 import com.bank.bankservice.customer.control.CustomerController;
 import com.bank.bankservice.customer.entity.CustomerRequest;
 import com.bank.bankservice.customer.entity.CustomerResponse;
@@ -8,21 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+
 @RestController
 @RequestMapping("/bank")
-public class BankResource {
+public class CustomerResource {
 
     @Autowired
     CustomerController customerController;
 
-    @Autowired
-    AccountController accountController;
-
     @GetMapping(
-        value="customers",
+            value="customers",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public CustomerResponse listAllCustomers() {
+    public List<CustomerResponse> listAllCustomers() {
         return customerController.getCustomers();
     }
 
@@ -32,10 +31,4 @@ public class BankResource {
     public void createCustomer(@RequestBody CustomerRequest customerRequest) {
         customerController.createCustomer(customerRequest);
     }
-
-    @PostMapping(path = "accounts/{customerId}")
-    public void createAccount(@PathVariable String customerId){
-        accountController.createAccount(customerId);
-    }
-
 }
