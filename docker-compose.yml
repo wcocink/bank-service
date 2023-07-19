@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    container_name: postgres_bank_service
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgresbank
+    ports:
+      - '5432:5432'
