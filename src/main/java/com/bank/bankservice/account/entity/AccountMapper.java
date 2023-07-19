@@ -1,16 +1,12 @@
 package com.bank.bankservice.account.entity;
 
-import com.bank.bankservice.customer.entity.Customer;
-import com.bank.bankservice.customer.entity.CustomerRequest;
-import com.bank.bankservice.customer.entity.CustomerResponse;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
 
-    CustomerResponse customerEntityToCustomerResponse(Customer entity);
-
-    Customer customerRequestToCustomerEntity(CustomerRequest customerRequest);
+    @Mapping(source = "customer.id", target = "customerId")
+    AccountResponse accountEntityToAccountResponse(Account entity);
 
 }
