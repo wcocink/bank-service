@@ -29,6 +29,10 @@ public class TransactionController {
     public void deposit(String accountId, TransactionRequest transactionRequest){
         Optional<Account> optionalAccount = Optional.of(accountRepository.getReferenceById(Long.valueOf(accountId)));
 
+        optionalAccount.get().setAmount(optionalAccount.get().getAmount().add(transactionRequest.getAmount()));
+        accountRepository.save(optionalAccount.get());
+
+        //TODO - send this to kafka to get consumed later
         Transaction transactionEntity = new Transaction();
         transactionEntity.setTransactionType("DEPOSIT"); //TODO change to enum
         transactionEntity.setDate(LocalDateTime.now());
