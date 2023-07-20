@@ -25,7 +25,7 @@ public class TransactionController {
     @Autowired
     TransactionMapper transactionMapper;
 
-    public void deposit(String accountId, TransactionRequest transactionRequest){
+    public TransactionResponse deposit(String accountId, TransactionRequest transactionRequest){
         Optional<Account> optionalAccount = Optional.of(accountRepository.getReferenceById(Long.valueOf(accountId)));
 
         optionalAccount.get().setBalance(
@@ -41,6 +41,7 @@ public class TransactionController {
         transactionEntity.setValue(transactionRequest.getAmount());
 
         transactionRepository.save(transactionEntity);
+        return new TransactionResponse(); //todo adapt here
     }
 
     public List<TransactionResponse> getTransactions(String accountId){
@@ -49,7 +50,7 @@ public class TransactionController {
     }
 
 
-    public void withdraw(String accountId, TransactionRequest transactionRequest){
+    public TransactionResponse withdraw(String accountId, TransactionRequest transactionRequest){
         Optional<Account> account = accountRepository.findAccountById(Long.valueOf(accountId));
         if(account.isEmpty()){
             throw AccountException.accountNotFound();
@@ -70,6 +71,7 @@ public class TransactionController {
         transactionEntity.setValue(transactionRequest.getAmount());
 
         transactionRepository.save(transactionEntity);
+        return new TransactionResponse(); //todo adapt here
     }
 
     private boolean hasEnoughBalance(BigDecimal accountBalance, BigDecimal withdrawAmount){

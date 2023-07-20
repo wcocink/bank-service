@@ -10,6 +10,8 @@ public class TransactionResponse {
 
     private String id;
 
+    private BigDecimal currentBalance;
+
     private String transactionType;
 
     private LocalDateTime date;
