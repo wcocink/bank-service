@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class AccountRequest {
 
-    @DecimalMin(value = "0.0", inclusive = false)
+    @DecimalMin(value = "0")
     @Digits(integer=10, fraction=2)
     private BigDecimal initialBalance;
 

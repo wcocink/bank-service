@@ -6,30 +6,28 @@ import com.bank.bankservice.transaction.entity.TransactionRequest;
 import com.bank.bankservice.transaction.entity.TransactionResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bank/accounts")
+@RequestMapping("/bank/transactions")
 public class TransactionResource {
 
     @Autowired
     TransactionController transactionController;
 
-    @PatchMapping(path = "{accountId}/transactions/deposit",
+    @PatchMapping(path = "/{accountId}/deposit",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OperationResponse> deposit(@PathVariable String accountId, @RequestBody @Valid TransactionRequest transactionRequest) {
         return new ResponseEntity<>(transactionController.deposit(accountId, transactionRequest), HttpStatus.OK);
     }
 
-    @PatchMapping(path = "{accountId}/transactions/withdraw",
+    @PatchMapping(path = "/{accountId}/withdraw",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OperationResponse> withdraw(@PathVariable String accountId, @RequestBody @Valid TransactionRequest transactionRequest) {
@@ -37,7 +35,7 @@ public class TransactionResource {
     }
 
     @GetMapping(
-            value="{accountId}/transactions",
+            value="/{accountId}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<TransactionResponse>> getAllTransactionsFromAccount(@PathVariable String accountId) {

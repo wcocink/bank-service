@@ -10,19 +10,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/bank/customers")
+@RequestMapping("/bank")
 public class AccountResource {
 
     @Autowired
     AccountController accountController;
 
-    @PostMapping(path = "{customerId}/accounts")
+    @PostMapping(path = "/accounts/{customerId}")
     public ResponseEntity<AccountResponse> createAccount(@PathVariable String customerId,
                                                          @RequestBody @Valid AccountRequest accountRequest){
         return new ResponseEntity<>(accountController.createAccount(customerId, accountRequest), HttpStatus.CREATED);
     }
 
-    @GetMapping(path = "accounts/{accountId}")
+    @GetMapping(path = "/accounts/{accountId}")
     public AccountResponse getAccount(@PathVariable String accountId){
         return accountController.getAccount(accountId);
     }
