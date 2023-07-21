@@ -7,11 +7,12 @@ import com.bank.bankservice.kafka.producer.control.TransactionProducerController
 import com.bank.bankservice.kafka.producer.entity.TransactionMessageRequest;
 import com.bank.bankservice.transaction.entity.*;
 import com.bank.bankservice.transaction.exception.TransactionException;
+import com.bank.bankservice.transaction.exception.TransactionNotEnoughBalanceException;
+import com.bank.bankservice.transaction.exception.TransactionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +54,7 @@ public class TransactionController {
         return transactionMapper.transactionEntityToOperationResponse(transaction);
     }
 
-    public List<TransactionResponse> getTransactions(String accountId){
+    public List<TransactionResponse> getAccountTransactions(String accountId){
         Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
         if(optionalAccount.isEmpty()){
             throw AccountException.accountNotFound();
@@ -64,13 +65,21 @@ public class TransactionController {
         );
     }
 
+    public TransactionResponse getTransaction(String transactionId){
+        Optional<Transaction> optionalTransaction = transactionRepository.findTransactionById(transactionId);
+        if(optionalTransaction.isEmpty()){
+            throw TransactionNotFoundException.transactionNotFound();
+        }
+        return transactionMapper.transactionEntityToTransactionResponse(optionalTransaction.get());
+    }
+
     public OperationResponse withdraw(String accountId, TransactionRequest transactionRequest){
         Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
         if(optionalAccount.isEmpty()){
             throw AccountException.accountNotFound();
         }
         if(!hasEnoughBalance(optionalAccount.get().getBalance(), transactionRequest.getAmount())){
-            throw TransactionException.notEnoughBalance();
+            throw TransactionNotEnoughBalanceException.notEnoughBalance();
         }
 
         optionalAccount.get().setBalance(optionalAccount.get().getBalance().subtract(transactionRequest.getAmount()));

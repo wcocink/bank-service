@@ -12,6 +12,7 @@ public interface TransactionMapper {
     @Mapping(source = "transactionType", target = "transactionType")
     List<TransactionResponse> transactionEntityListToTransactionResponseList(List<Transaction> transactionList);
 
+    TransactionResponse transactionEntityToTransactionResponse(Transaction transaction);
 
     @Mapping(source = "account.balance", target = "balanceAfterTransaction")
     OperationResponse transactionEntityToOperationResponse(Transaction transaction);

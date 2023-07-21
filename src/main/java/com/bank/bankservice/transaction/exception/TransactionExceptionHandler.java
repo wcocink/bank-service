@@ -13,8 +13,16 @@ import java.util.Map;
 public class TransactionExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(TransactionException.class)
-    public Map<String, String> handleInvalidArgumentException(TransactionException ex){
+    @ExceptionHandler(TransactionNotEnoughBalanceException.class)
+    public Map<String, String> handleNotEnoughBalanceException(TransactionNotEnoughBalanceException ex){
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("message", ex.getMessage());
+        return errorMap;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public Map<String, String> handleNotFoundException(TransactionNotFoundException ex){
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("message", ex.getMessage());
         return errorMap;
