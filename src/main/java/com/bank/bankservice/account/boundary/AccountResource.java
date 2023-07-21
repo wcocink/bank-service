@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/bank")
+@RequestMapping("/bank/customers")
 public class AccountResource {
 
     @Autowired
     AccountController accountController;
 
-    @PostMapping(path = "accounts/{customerId}")
+    @PostMapping(path = "{customerId}/accounts")
     public ResponseEntity<AccountResponse> createAccount(@PathVariable String customerId,
                                                          @RequestBody @Valid AccountRequest accountRequest){
         return new ResponseEntity<>(accountController.createAccount(customerId, accountRequest), HttpStatus.CREATED);

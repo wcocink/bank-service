@@ -40,15 +40,12 @@ public class TransactionResource {
             value="{accountId}/transactions",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<TransactionResponse>> getAllTransactionsFromAccount(@PathVariable String accountId,
-                                                                   @RequestParam(value = "from", required = false) @DateTimeFormat(pattern= "yyyy-MM-dd") LocalDate fromDate,
-                                                                   @RequestParam(value = "to", required = false) @DateTimeFormat(pattern= "yyyy-MM-dd") LocalDate toDate) {
-        List<TransactionResponse> transactionResponseList = transactionController.getTransactions(accountId, fromDate, toDate);
+    public ResponseEntity<List<TransactionResponse>> getAllTransactionsFromAccount(@PathVariable String accountId) {
+        List<TransactionResponse> transactionResponseList = transactionController.getTransactions(accountId);
         if(transactionResponseList.isEmpty()){
             return new ResponseEntity<>(transactionResponseList, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(transactionResponseList, HttpStatus.OK);
-
     }
 
 }

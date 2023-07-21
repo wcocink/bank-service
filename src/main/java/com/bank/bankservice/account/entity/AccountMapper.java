@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 public interface AccountMapper {
 
     @Mapping(source = "id", target = "accountId")
-    @Mapping(source = "customer.id", target = "customerId")
+    @Mapping(source = "customer", target = "customer")
     AccountResponse accountEntityToAccountResponse(Account entity);
 
 

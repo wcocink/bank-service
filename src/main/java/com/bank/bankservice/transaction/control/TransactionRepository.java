@@ -13,12 +13,10 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
 
+//    @Query(value = "from TRANSACTION t where (t.date BETWEEN :fromDate AND :toDate) AND t.account.id = :accountId")
+//    List<Transaction> getAllBetweenDates(@Param("accountId") Long accountId,
+//                                         @Param("fromDate") LocalDateTime startDate,
+//                                         @Param("toDate") LocalDateTime endDate);
 
-    //List<Transaction> findByAccountIdAndDateGreaterThanEqualAndDateLessThanEqual(Long accountId, Date startDate, Date endDate);
-
-    @Query(value = "from TRANSACTION t where (t.date BETWEEN :fromDate AND :toDate) AND t.account.id = :accountId")
-    List<Transaction> getAllBetweenDates(@Param("accountId") Long accountId,
-                                         @Param("fromDate") LocalDateTime startDate,
-                                         @Param("toDate") LocalDateTime endDate);
-
+    List<Transaction> findTransactionsByAccountId(Long id);
 }

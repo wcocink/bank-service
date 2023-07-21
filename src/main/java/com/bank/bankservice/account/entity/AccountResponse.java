@@ -1,5 +1,6 @@
 package com.bank.bankservice.account.entity;
 
+import com.bank.bankservice.customer.entity.CustomerResponse;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,5 +13,7 @@ public class AccountResponse {
     private BigDecimal balance;
 
     private Long customerId;
+
+    private CustomerResponse customer;
 
 }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,15 +53,14 @@ public class TransactionController {
         return transactionMapper.transactionEntityToOperationResponse(transaction);
     }
 
-    public List<TransactionResponse> getTransactions(String accountId, LocalDate fromDate, LocalDate toDate){
+    public List<TransactionResponse> getTransactions(String accountId){
         Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
         if(optionalAccount.isEmpty()){
             throw AccountException.accountNotFound();
         }
+
         return transactionMapper.transactionEntityListToTransactionResponseList(
-                transactionRepository.getAllBetweenDates(optionalAccount.get().getId(),
-                        LocalDateTime.from(fromDate.atStartOfDay()),
-                        LocalDateTime.from(toDate.atStartOfDay()))
+                transactionRepository.findTransactionsByAccountId(optionalAccount.get().getId())
         );
     }
 
