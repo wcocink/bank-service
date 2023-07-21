@@ -26,6 +26,8 @@ public class Transaction {
 
     private BigDecimal value;
 
+    private BigDecimal accountBalance;
+
     @ManyToOne
     private Account account;
 

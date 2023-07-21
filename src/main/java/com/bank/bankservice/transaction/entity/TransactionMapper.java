@@ -9,10 +9,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface TransactionMapper {
 
+    @Mapping(source = "transactionType", target = "transactionType")
     List<TransactionResponse> transactionEntityListToTransactionResponseList(List<Transaction> transactionList);
 
-    @Mapping(source = "account.balance", target = "currentBalance")
-    TransactionResponse transactionEntityToTransactionResponse(Transaction transaction);
+
+    @Mapping(source = "account.balance", target = "balanceAfterTransaction")
+    OperationResponse transactionEntityToOperationResponse(Transaction transaction);
 
     TransactionMessageRequest transactionEntityToTransactionMessageRequest(Transaction transaction);
 

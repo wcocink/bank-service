@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +32,7 @@ public class TransactionController {
     @Autowired
     TransactionProducerController transactionProducerController;
 
-    public TransactionResponse deposit(String accountId, TransactionRequest transactionRequest){
+    public OperationResponse deposit(String accountId, TransactionRequest transactionRequest){
         Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
 
         if(optionalAccount.isEmpty()){
@@ -49,15 +51,22 @@ public class TransactionController {
 
         this.sendMessageToQueue(transactionMapper.transactionEntityToTransactionMessageRequest(transaction));
 
-        return transactionMapper.transactionEntityToTransactionResponse(transaction);
+        return transactionMapper.transactionEntityToOperationResponse(transaction);
     }
 
-    public List<TransactionResponse> getTransactions(String accountId){
+    public List<TransactionResponse> getTransactions(String accountId, LocalDate fromDate, LocalDate toDate){
         Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
-        return transactionMapper.transactionEntityListToTransactionResponseList(transactionRepository.findByAccountId(optionalAccount.get().getId()));
+        if(optionalAccount.isEmpty()){
+            throw AccountException.accountNotFound();
+        }
+        return transactionMapper.transactionEntityListToTransactionResponseList(
+                transactionRepository.getAllBetweenDates(optionalAccount.get().getId(),
+                        LocalDateTime.from(fromDate.atStartOfDay()),
+                        LocalDateTime.from(toDate.atStartOfDay()))
+        );
     }
 
-    public TransactionResponse withdraw(String accountId, TransactionRequest transactionRequest){
+    public OperationResponse withdraw(String accountId, TransactionRequest transactionRequest){
         Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
         if(optionalAccount.isEmpty()){
             throw AccountException.accountNotFound();
@@ -76,7 +85,7 @@ public class TransactionController {
 
         this.sendMessageToQueue(transactionMapper.transactionEntityToTransactionMessageRequest(transaction));
 
-        return transactionMapper.transactionEntityToTransactionResponse(transaction);
+        return transactionMapper.transactionEntityToOperationResponse(transaction);
     }
 
     public void saveTransaction(Transaction transaction){

@@ -6,15 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class TransactionResponse {
-
-    private String id;
-
-    private String transactionType;
-
-    private LocalDateTime date;
-
-    private BigDecimal value;
+public class OperationResponse {
 
     private BigDecimal balanceAfterTransaction;
 
