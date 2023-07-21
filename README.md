@@ -1,5 +1,5 @@
 # bank-service
-Bank API Challenge for Equadis Company
+Bank API 
 
 docker build -t spring-boot-docker:spring-docker .
 
