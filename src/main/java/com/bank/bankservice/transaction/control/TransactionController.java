@@ -41,14 +41,13 @@ public class TransactionController {
         transactionEntity.setValue(transactionRequest.getAmount());
 
         transactionRepository.save(transactionEntity);
-        return new TransactionResponse(); //todo adapt here
+        return transactionMapper.transactionEntityToTransactionResponse(transactionEntity);
     }
 
     public List<TransactionResponse> getTransactions(String accountId){
         Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
         return transactionMapper.transactionEntityListToTransactionResponseList(transactionRepository.findByAccountId(optionalAccount.get().getId()));
     }
-
 
     public TransactionResponse withdraw(String accountId, TransactionRequest transactionRequest){
         Optional<Account> account = accountRepository.findAccountById(Long.valueOf(accountId));
@@ -71,7 +70,7 @@ public class TransactionController {
         transactionEntity.setValue(transactionRequest.getAmount());
 
         transactionRepository.save(transactionEntity);
-        return new TransactionResponse(); //todo adapt here
+        return transactionMapper.transactionEntityToTransactionResponse(transactionEntity);
     }
 
     private boolean hasEnoughBalance(BigDecimal accountBalance, BigDecimal withdrawAmount){
