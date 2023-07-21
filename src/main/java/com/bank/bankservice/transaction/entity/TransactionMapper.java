@@ -1,5 +1,6 @@
 package com.bank.bankservice.transaction.entity;
 
+import com.bank.bankservice.kafka.producer.entity.TransactionMessageRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -12,5 +13,7 @@ public interface TransactionMapper {
 
     @Mapping(source = "account.balance", target = "currentBalance")
     TransactionResponse transactionEntityToTransactionResponse(Transaction transaction);
+
+    TransactionMessageRequest transactionEntityToTransactionMessageRequest(Transaction transaction);
 
 }

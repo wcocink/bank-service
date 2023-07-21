@@ -3,6 +3,9 @@ package com.bank.bankservice.transaction.control;
 import com.bank.bankservice.account.control.AccountRepository;
 import com.bank.bankservice.account.entity.Account;
 import com.bank.bankservice.account.exception.AccountException;
+import com.bank.bankservice.kafka.producer.control.TransactionMessageRequestSerializer;
+import com.bank.bankservice.kafka.producer.control.TransactionProducerController;
+import com.bank.bankservice.kafka.producer.entity.TransactionMessageRequest;
 import com.bank.bankservice.transaction.entity.*;
 import com.bank.bankservice.transaction.exception.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -25,20 +29,28 @@ public class TransactionController {
     @Autowired
     TransactionMapper transactionMapper;
 
+    @Autowired
+    TransactionProducerController transactionProducerController;
+
     public TransactionResponse deposit(String accountId, TransactionRequest transactionRequest){
-        Optional<Account> optionalAccount = Optional.of(accountRepository.getReferenceById(Long.valueOf(accountId)));
+        Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
+
+        if(optionalAccount.isEmpty()){
+            throw AccountException.accountNotFound();
+        }
 
         optionalAccount.get().setBalance(
                 optionalAccount.get().getBalance().add(transactionRequest.getAmount()));
 
         this.updateAccount(optionalAccount.get());
 
-        //TODO - send this to kafka to get consumed later
         Transaction transactionEntity = new Transaction();
         transactionEntity.setTransactionType(TransactionEnum.DEPOSIT.getTransactionType());
         transactionEntity.setDate(LocalDateTime.now());
         transactionEntity.setAccount(optionalAccount.get());
         transactionEntity.setValue(transactionRequest.getAmount());
+
+        this.sendMessageToQueue(transactionMapper.transactionEntityToTransactionMessageRequest(transactionEntity));
 
         transactionRepository.save(transactionEntity);
         return transactionMapper.transactionEntityToTransactionResponse(transactionEntity);
@@ -81,5 +93,8 @@ public class TransactionController {
         accountRepository.save(account);
     }
 
+    private void sendMessageToQueue(TransactionMessageRequest transactionMessageRequest){
+        this.transactionProducerController.sendMessage(transactionMessageRequest);
+    }
 
 }
