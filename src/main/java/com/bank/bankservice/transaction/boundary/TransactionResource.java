@@ -13,20 +13,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bank")
+@RequestMapping("/bank/accounts")
 public class TransactionResource {
 
     @Autowired
     TransactionController transactionController;
 
-    @PatchMapping(path = "transactions/{accountId}/deposit",
+    @PatchMapping(path = "{accountId}/transactions/deposit",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionResponse> deposit(@PathVariable String accountId, @RequestBody @Valid TransactionRequest transactionRequest) {
         return new ResponseEntity<>(transactionController.deposit(accountId, transactionRequest), HttpStatus.OK);
     }
 
-    @PatchMapping(path = "transactions/{accountId}/withdraw",
+    @PatchMapping(path = "{accountId}/transactions/withdraw",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionResponse> withdraw(@PathVariable String accountId, @RequestBody @Valid TransactionRequest transactionRequest) {
@@ -34,7 +34,7 @@ public class TransactionResource {
     }
 
     @GetMapping(
-            value="transactions/{accountId}",
+            value="{accountId}/transactions",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<TransactionResponse> getAllTransactionsFromAccount(@PathVariable String accountId) {

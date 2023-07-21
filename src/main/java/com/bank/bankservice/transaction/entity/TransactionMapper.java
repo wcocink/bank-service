@@ -16,4 +16,6 @@ public interface TransactionMapper {
 
     TransactionMessageRequest transactionEntityToTransactionMessageRequest(Transaction transaction);
 
+    Transaction transactionMessageRequestToTransactionEntity(TransactionMessageRequest transactionMessageRequest);
+
 }

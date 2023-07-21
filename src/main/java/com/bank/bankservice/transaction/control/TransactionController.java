@@ -3,7 +3,6 @@ package com.bank.bankservice.transaction.control;
 import com.bank.bankservice.account.control.AccountRepository;
 import com.bank.bankservice.account.entity.Account;
 import com.bank.bankservice.account.exception.AccountException;
-import com.bank.bankservice.kafka.producer.control.TransactionMessageRequestSerializer;
 import com.bank.bankservice.kafka.producer.control.TransactionProducerController;
 import com.bank.bankservice.kafka.producer.entity.TransactionMessageRequest;
 import com.bank.bankservice.transaction.entity.*;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -44,16 +42,14 @@ public class TransactionController {
 
         this.updateAccount(optionalAccount.get());
 
-        Transaction transactionEntity = new Transaction();
-        transactionEntity.setTransactionType(TransactionEnum.DEPOSIT.getTransactionType());
-        transactionEntity.setDate(LocalDateTime.now());
-        transactionEntity.setAccount(optionalAccount.get());
-        transactionEntity.setValue(transactionRequest.getAmount());
+        Transaction transaction = createTransactionObject(optionalAccount.get(),
+                TransactionEnum.DEPOSIT.getTransactionType(),
+                transactionRequest.getAmount());
 
-        this.sendMessageToQueue(transactionMapper.transactionEntityToTransactionMessageRequest(transactionEntity));
 
-        transactionRepository.save(transactionEntity);
-        return transactionMapper.transactionEntityToTransactionResponse(transactionEntity);
+        this.sendMessageToQueue(transactionMapper.transactionEntityToTransactionMessageRequest(transaction));
+
+        return transactionMapper.transactionEntityToTransactionResponse(transaction);
     }
 
     public List<TransactionResponse> getTransactions(String accountId){
@@ -62,27 +58,29 @@ public class TransactionController {
     }
 
     public TransactionResponse withdraw(String accountId, TransactionRequest transactionRequest){
-        Optional<Account> account = accountRepository.findAccountById(Long.valueOf(accountId));
-        if(account.isEmpty()){
+        Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
+        if(optionalAccount.isEmpty()){
             throw AccountException.accountNotFound();
         }
-        if(!hasEnoughBalance(account.get().getBalance(), transactionRequest.getAmount())){
+        if(!hasEnoughBalance(optionalAccount.get().getBalance(), transactionRequest.getAmount())){
             throw TransactionException.notEnoughBalance();
-
         }
-        account.get().setBalance(account.get().getBalance().subtract(transactionRequest.getAmount()));
 
-        this.updateAccount(account.get());
+        optionalAccount.get().setBalance(optionalAccount.get().getBalance().subtract(transactionRequest.getAmount()));
 
-        //TODO - send this to kafka to get consumed later
-        Transaction transactionEntity = new Transaction();
-        transactionEntity.setTransactionType(TransactionEnum.WITHDRAW.getTransactionType());
-        transactionEntity.setDate(LocalDateTime.now());
-        transactionEntity.setAccount(account.get());
-        transactionEntity.setValue(transactionRequest.getAmount());
+        this.updateAccount(optionalAccount.get());
 
-        transactionRepository.save(transactionEntity);
-        return transactionMapper.transactionEntityToTransactionResponse(transactionEntity);
+        Transaction transaction = createTransactionObject(optionalAccount.get(),
+                TransactionEnum.WITHDRAW.getTransactionType(),
+                transactionRequest.getAmount());
+
+        this.sendMessageToQueue(transactionMapper.transactionEntityToTransactionMessageRequest(transaction));
+
+        return transactionMapper.transactionEntityToTransactionResponse(transaction);
+    }
+
+    public void saveTransaction(Transaction transaction){
+        transactionRepository.save(transaction);
     }
 
     private boolean hasEnoughBalance(BigDecimal accountBalance, BigDecimal withdrawAmount){
@@ -95,6 +93,15 @@ public class TransactionController {
 
     private void sendMessageToQueue(TransactionMessageRequest transactionMessageRequest){
         this.transactionProducerController.sendMessage(transactionMessageRequest);
+    }
+
+    private Transaction createTransactionObject(Account account, String transactionType, BigDecimal amount){
+        Transaction transactionEntity = new Transaction();
+        transactionEntity.setTransactionType(transactionType);
+        transactionEntity.setDate(LocalDateTime.now());
+        transactionEntity.setAccount(account);
+        transactionEntity.setValue(amount);
+        return transactionEntity;
     }
 
 }

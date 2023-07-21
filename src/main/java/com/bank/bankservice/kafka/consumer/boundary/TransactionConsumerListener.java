@@ -16,10 +16,9 @@ public @interface TransactionConsumerListener {
     @AliasFor(annotation = KafkaListener.class, attribute = "topics")
     String[] topics() default "transaction-topic";
 
-
     @AliasFor(annotation = KafkaListener.class, attribute = "containerFactory")
     String containerFactory() default "kafkaListenerContainerFactory";
 
     @AliasFor(annotation = KafkaListener.class, attribute = "groupId")
-    String groupId() default "";
+    String groupId() default "group-1";
 }
