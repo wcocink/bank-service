@@ -10,5 +10,4 @@ public interface AccountMapper {
     @Mapping(source = "customer", target = "customer")
     AccountResponse accountEntityToAccountResponse(Account entity);
 
-
 }

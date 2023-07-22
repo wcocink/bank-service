@@ -1,12 +1,10 @@
 package com.bank.bankservice.kafka.consumer.config;
 
 import com.bank.bankservice.kafka.consumer.entity.TransactionMessageRequestDeserializer;
-import com.bank.bankservice.kafka.producer.control.TransactionMessageRequestSerializer;
 import com.bank.bankservice.kafka.producer.entity.TransactionMessageRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +30,6 @@ public class TransactionConsumerFactoryConfig {
         configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TransactionMessageRequestDeserializer.class);
         return new DefaultKafkaConsumerFactory<>(configs);
     }
-
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, TransactionMessageRequest> kafkaListenerContainerFactory() {

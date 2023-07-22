@@ -4,8 +4,8 @@ import com.bank.bankservice.account.control.AccountRepository;
 import com.bank.bankservice.account.entity.Account;
 import com.bank.bankservice.customer.control.CustomerRepository;
 import com.bank.bankservice.customer.entity.Customer;
+import com.bank.bankservice.transaction.control.TransactionRepository;
 import com.bank.bankservice.utils.AbstractIntegrationTests;
-import com.bank.bankservice.utils.JsonToString;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,7 +20,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest

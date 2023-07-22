@@ -16,6 +16,4 @@ public class TransactionResponse {
 
     private BigDecimal value;
 
-    private BigDecimal balanceAfterTransaction;
-
 }

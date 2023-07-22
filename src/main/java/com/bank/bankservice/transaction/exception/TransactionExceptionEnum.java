@@ -12,5 +12,4 @@ public enum TransactionExceptionEnum {
 
     private final String message;
 
-
 }

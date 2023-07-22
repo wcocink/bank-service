@@ -6,7 +6,6 @@ import com.bank.bankservice.account.exception.AccountException;
 import com.bank.bankservice.kafka.producer.control.TransactionProducerController;
 import com.bank.bankservice.kafka.producer.entity.TransactionMessageRequest;
 import com.bank.bankservice.transaction.entity.*;
-import com.bank.bankservice.transaction.exception.TransactionException;
 import com.bank.bankservice.transaction.exception.TransactionNotEnoughBalanceException;
 import com.bank.bankservice.transaction.exception.TransactionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

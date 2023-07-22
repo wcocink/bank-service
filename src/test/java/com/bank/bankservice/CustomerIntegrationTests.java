@@ -2,7 +2,6 @@ package com.bank.bankservice;
 
 import com.bank.bankservice.account.control.AccountRepository;
 import com.bank.bankservice.customer.control.CustomerRepository;
-import com.bank.bankservice.customer.entity.Customer;
 import com.bank.bankservice.customer.entity.CustomerRequest;
 import com.bank.bankservice.transaction.control.TransactionRepository;
 import com.bank.bankservice.utils.AbstractIntegrationTests;
