@@ -38,17 +38,17 @@ public class TransactionController {
             throw AccountException.accountNotFound();
         }
 
-        optionalAccount.get().setBalance(
-                optionalAccount.get().getBalance().add(transactionRequest.getAmount()));
-
-        this.updateAccount(optionalAccount.get());
-
         Transaction transaction = createTransactionObject(optionalAccount.get(),
                 TransactionEnum.DEPOSIT.getTransactionType(),
                 transactionRequest.getAmount());
 
 
         this.sendMessageToQueue(transactionMapper.transactionEntityToTransactionMessageRequest(transaction));
+
+        optionalAccount.get().setBalance(
+                optionalAccount.get().getBalance().add(transactionRequest.getAmount()));
+
+        this.updateAccount(optionalAccount.get());
 
         return transactionMapper.transactionEntityToOperationResponse(transaction);
     }
@@ -81,15 +81,15 @@ public class TransactionController {
             throw TransactionNotEnoughBalanceException.notEnoughBalance();
         }
 
-        optionalAccount.get().setBalance(optionalAccount.get().getBalance().subtract(transactionRequest.getAmount()));
-
-        this.updateAccount(optionalAccount.get());
-
         Transaction transaction = createTransactionObject(optionalAccount.get(),
                 TransactionEnum.WITHDRAW.getTransactionType(),
                 transactionRequest.getAmount());
 
         this.sendMessageToQueue(transactionMapper.transactionEntityToTransactionMessageRequest(transaction));
+
+        optionalAccount.get().setBalance(optionalAccount.get().getBalance().subtract(transactionRequest.getAmount()));
+
+        this.updateAccount(optionalAccount.get());
 
         return transactionMapper.transactionEntityToOperationResponse(transaction);
     }

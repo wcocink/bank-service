@@ -1,7 +1,8 @@
-package com.bank.bankservice;
+package com.bank.bankservice.customer;
 
 import com.bank.bankservice.account.control.AccountRepository;
 import com.bank.bankservice.customer.control.CustomerRepository;
+import com.bank.bankservice.customer.entity.Customer;
 import com.bank.bankservice.customer.entity.CustomerRequest;
 import com.bank.bankservice.transaction.control.TransactionRepository;
 import com.bank.bankservice.utils.AbstractIntegrationTests;
@@ -11,7 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -40,8 +44,13 @@ public class CustomerIntegrationTests extends AbstractIntegrationTests {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @MockBean
+    KafkaTemplate kafkaTemplate;
+
+    @MockBean
+    KafkaAdmin kafkaAdmin;
+
     @Test
-    @Order(1)
     public void givenValidRequest_whenCreateCustomer_thenCreateCustomer() throws Exception {
 
         CustomerRequest customerRequest = new CustomerRequest();
@@ -58,7 +67,6 @@ public class CustomerIntegrationTests extends AbstractIntegrationTests {
     }
 
     @Test
-    @Order(2)
     public void givenInvalidRequest_whenCreateCustomer_thenReturnError() throws Exception {
 
         CustomerRequest customerRequest = new CustomerRequest();
@@ -76,8 +84,10 @@ public class CustomerIntegrationTests extends AbstractIntegrationTests {
     }
 
     @Test
-    @Order(3)
     public void givenCustomersAlreadyCreated_whenGetCustomers_thenGetCustomerList() throws Exception {
+        Customer customer = new Customer();
+        customer.setName("Test1");
+        customerRepository.save(customer);
 
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders
                 .get("/bank/customers")
@@ -89,7 +99,6 @@ public class CustomerIntegrationTests extends AbstractIntegrationTests {
     }
 
     @Test
-    @Order(4)
     public void givenNoCustomersCreated_whenGetCustomers_thenReturnMessage() throws Exception {
         transactionRepository.deleteAll();
         accountRepository.deleteAll();

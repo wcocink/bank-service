@@ -1,4 +1,4 @@
-package com.bank.bankservice;
+package com.bank.bankservice.transaction;
 
 import com.bank.bankservice.account.control.AccountRepository;
 import com.bank.bankservice.account.entity.Account;
@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -39,6 +42,12 @@ public class TransactionIntegrationTests extends AbstractIntegrationTests {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @MockBean
+    KafkaTemplate kafkaTemplate;
+
+    @MockBean
+    KafkaAdmin kafkaAdmin;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
