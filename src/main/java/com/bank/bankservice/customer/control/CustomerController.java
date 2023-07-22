@@ -4,12 +4,17 @@ import com.bank.bankservice.customer.entity.Customer;
 import com.bank.bankservice.customer.entity.CustomerMapper;
 import com.bank.bankservice.customer.entity.CustomerRequest;
 import com.bank.bankservice.customer.entity.CustomerResponse;
+import com.bank.bankservice.customer.exception.CustomerException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
+@Log4j2
 public class CustomerController {
 
     @Autowired
@@ -25,7 +30,12 @@ public class CustomerController {
     }
 
     public List<CustomerResponse> getCustomers(){
-        return customerMapper.customerEntityListToCustomerResponseList(customerRepository.findAll());
+        List<Customer> customerList = customerRepository.findAll();
+        if(customerList.isEmpty()){
+            log.info("Customers not found");
+            throw CustomerException.customerNotFound();
+        }
+        return customerMapper.customerEntityListToCustomerResponseList(customerList);
     }
 
 }

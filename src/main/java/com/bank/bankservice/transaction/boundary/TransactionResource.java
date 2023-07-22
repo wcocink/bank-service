@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +42,9 @@ public class TransactionResource {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<TransactionResponse>> getAllTransactionsFromAccount(@PathVariable String accountId,
-                                                                                   @RequestParam Optional<String> id) {
+                                                                                   @RequestParam Optional<LocalDateTime> localDateTime,
+                                                                                   @RequestParam Optional<String> transactionType,
+                                                                                   @RequestParam Optional<BigDecimal> transactionValue) {
         List<TransactionResponse> transactionResponseList = transactionController.getAccountTransactions(accountId);
         if(transactionResponseList.isEmpty()){
             return new ResponseEntity<>(transactionResponseList, HttpStatus.NOT_FOUND);
