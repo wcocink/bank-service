@@ -27,4 +27,12 @@ public class TransactionExceptionHandler {
         return errorMap;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TransactionInvalidDatesException.class)
+    public Map<String, String> handleInvalidDates(TransactionInvalidDatesException ex){
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("message", ex.getMessage());
+        return errorMap;
+    }
+
 }

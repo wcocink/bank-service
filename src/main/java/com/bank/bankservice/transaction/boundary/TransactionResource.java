@@ -6,12 +6,17 @@ import com.bank.bankservice.transaction.entity.TransactionRequest;
 import com.bank.bankservice.transaction.entity.TransactionResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/bank/transactions")
@@ -38,8 +43,15 @@ public class TransactionResource {
             value="/accounts/{accountId}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<TransactionResponse>> getAllTransactionsFromAccount(@PathVariable String accountId) {
-        List<TransactionResponse> transactionResponseList = transactionController.getAccountTransactions(accountId);
+    public ResponseEntity<List<TransactionResponse>> getAllTransactionsFromAccount(@PathVariable String accountId,
+                                                                                   @RequestParam @Valid Optional<String> transactionType,
+                                                                                   @RequestParam @Valid Optional<BigDecimal> value,
+                                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                                                           Optional<LocalDate> startDate,
+                                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                                                               Optional<LocalDate> endDate) {
+
+        List<TransactionResponse> transactionResponseList = transactionController.getAccountTransactions(accountId, transactionType, value, startDate, endDate);
         if(transactionResponseList.isEmpty()){
             return new ResponseEntity<>(transactionResponseList, HttpStatus.NOT_FOUND);
         }

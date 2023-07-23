@@ -6,12 +6,16 @@ import com.bank.bankservice.account.exception.AccountException;
 import com.bank.bankservice.kafka.producer.control.TransactionProducerController;
 import com.bank.bankservice.kafka.producer.entity.TransactionMessageRequest;
 import com.bank.bankservice.transaction.entity.*;
+import com.bank.bankservice.transaction.exception.TransactionException;
+import com.bank.bankservice.transaction.exception.TransactionInvalidDatesException;
 import com.bank.bankservice.transaction.exception.TransactionNotEnoughBalanceException;
 import com.bank.bankservice.transaction.exception.TransactionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -53,15 +57,35 @@ public class TransactionController {
         return transactionMapper.transactionEntityToOperationResponse(transaction);
     }
 
-    public List<TransactionResponse> getAccountTransactions(String accountId){
+    public List<TransactionResponse> getAccountTransactions(String accountId,
+                                                            Optional<String> transactionType,
+                                                            Optional<BigDecimal> value,
+                                                            Optional<LocalDate> startDate,
+                                                            Optional<LocalDate> endDate){
+
+        this.validateDates(startDate, endDate);
+
         Optional<Account> optionalAccount = accountRepository.findAccountById(Long.valueOf(accountId));
         if(optionalAccount.isEmpty()){
             throw AccountException.accountNotFound();
         }
 
         return transactionMapper.transactionEntityListToTransactionResponseList(
-                transactionRepository.findTransactionsByAccountId(optionalAccount.get().getId())
-        );
+                transactionRepository.findByAccountIdAndOptionals(optionalAccount.get(), transactionType, value,
+                        convertToLocalDateTime(startDate),
+                        convertToLocalDateTime(endDate)));
+    }
+
+    private LocalDateTime convertToLocalDateTime(Optional<LocalDate> date) {
+        return date.map(LocalDate::atStartOfDay).orElse(null);
+    }
+
+    private void validateDates(Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+        if (endDate.isPresent() && startDate.isPresent()){
+            if (endDate.get().isBefore(startDate.get())){
+                throw TransactionInvalidDatesException.transactionInvalidDate();
+            }
+        }
     }
 
     public TransactionResponse getTransaction(String transactionId){

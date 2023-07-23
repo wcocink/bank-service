@@ -1,10 +1,7 @@
 package com.bank.bankservice.transaction.entity;
 
 import com.bank.bankservice.account.entity.Account;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
