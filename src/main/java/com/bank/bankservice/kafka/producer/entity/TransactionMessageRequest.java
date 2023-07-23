@@ -15,9 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class TransactionMessageRequest implements Serializable {
 
     private String transactionType;

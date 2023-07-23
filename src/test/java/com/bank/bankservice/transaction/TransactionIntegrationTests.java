@@ -201,6 +201,27 @@ public class TransactionIntegrationTests extends AbstractIntegrationTests {
     }
 
     @Test
+    public void givenValidAccountId_whenGetTransactionByAccountHasNoTransactions_thenReturnError() throws Exception {
+
+        Customer customer = new Customer();
+        customer.setName("Test1");
+        Customer c = customerRepository.save(customer);
+
+        Account account = new Account();
+        account.setCustomer(c);
+        account.setBalance(new BigDecimal(515));
+        Account a = accountRepository.save(account);
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+                .get("/bank/transactions/accounts/"+a.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        response.andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
     public void givenValidAccountId_whenGetTransactionByAccountId_thenGetTransactions() throws Exception {
 
         Customer customer = new Customer();
