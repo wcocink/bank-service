@@ -33,7 +33,7 @@ also, the kafkdrop is available on:
 
 As it is a simple prototype of a bank-service, I assumed that in the future the service is going to have many costumers, accounts and trasactions.
 
-For this reason, at the moment which the user requests a transaction, the only validation that is being done (in terms of business rules) is if the requester's account has enough funds to complete that. On the positive cenario, the requester receives an OK from the api with the current account's balance and then, a message to a kafka queue will be sent. This message will be consumed assynchronously to create a entry in the Transaction table with more transaction details.
+For this reason, at the moment which the user requests a transaction, the only validation that is being done (in terms of business rules) is if the requester's account has enough funds to complete that. On the positive cenario, the requester receives an OK from the api with the current account's balance and then, a message to a kafka queue will be sent. This message will be consumed assynchronously to create an entry in the Transaction table with more transaction details.
 
 ## Unit/Integrated Tests
 The Unit tests are being done with JUnit and Mockito
