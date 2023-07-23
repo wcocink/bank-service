@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +42,7 @@ public class TransactionResource {
             value="/accounts/{accountId}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<TransactionResponse>> getAllTransactionsFromAccount(@PathVariable String accountId,
+    public ResponseEntity<List<TransactionResponse>> getTransactionsFromAccountIdAndOptionals(@PathVariable String accountId,
                                                                                    @RequestParam @Valid Optional<String> transactionType,
                                                                                    @RequestParam @Valid Optional<BigDecimal> value,
                                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

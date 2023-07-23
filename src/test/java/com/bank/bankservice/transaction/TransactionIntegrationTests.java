@@ -24,6 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Month;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -254,6 +255,113 @@ public class TransactionIntegrationTests extends AbstractIntegrationTests {
 
         response.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    public void givenValidAccountIdAndOptionalDates_whenGetTransactionByAccountIdAndOptionals_thenGetTransactions() throws Exception {
+
+        transactionRepository.deleteAll();
+        accountRepository.deleteAll();
+        customerRepository.deleteAll();
+
+        Customer customer = new Customer();
+        customer.setName("Test1");
+        Customer c = customerRepository.save(customer);
+
+        Account account = new Account();
+        account.setCustomer(c);
+        account.setBalance(new BigDecimal(515));
+        Account a = accountRepository.save(account);
+
+        Transaction transaction1 = new Transaction();
+        transaction1.setTransactionType("WITHDRAW");
+        transaction1.setValue(new BigDecimal("101.10"));
+        transaction1.setDate(LocalDateTime.of(2023, Month.JULY,23,15,0,0));
+        transaction1.setAccount(a);
+        transactionRepository.save(transaction1);
+
+        Transaction transaction2 = new Transaction();
+        transaction2.setTransactionType("WITHDRAW");
+        transaction2.setValue(new BigDecimal("100"));
+        transaction2.setDate(LocalDateTime.of(2023, Month.JULY,23,15,1,0));
+        transaction2.setAccount(a);
+        transactionRepository.save(transaction2);
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+                .get("/bank/transactions/accounts/"+a.getId()+"?startDate=2023-07-23&endDate=2023-07-24")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    public void givenValidAccountIdAndInvalidOptionalDates_whenGetTransactionByAccountIdAndOptionals_thenReturnError() throws Exception {
+
+        transactionRepository.deleteAll();
+        accountRepository.deleteAll();
+        customerRepository.deleteAll();
+
+        Customer customer = new Customer();
+        customer.setName("Test1");
+        Customer c = customerRepository.save(customer);
+
+        Account account = new Account();
+        account.setCustomer(c);
+        account.setBalance(new BigDecimal(515));
+        Account a = accountRepository.save(account);
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+                .get("/bank/transactions/accounts/"+a.getId()+"?startDate=2023-07-24&endDate=2023-07-23")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        response.andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The end date must be after start date."));
+    }
+
+    @Test
+    public void givenValidAccountIdAndAllOptionals_whenGetTransactionByAccountIdAndOptionals_thenGetTransactions() throws Exception {
+
+        transactionRepository.deleteAll();
+        accountRepository.deleteAll();
+        customerRepository.deleteAll();
+
+        Customer customer = new Customer();
+        customer.setName("Test1");
+        Customer c = customerRepository.save(customer);
+
+        Account account = new Account();
+        account.setCustomer(c);
+        account.setBalance(new BigDecimal(515));
+        Account a = accountRepository.save(account);
+
+        Transaction transaction1 = new Transaction();
+        transaction1.setTransactionType("WITHDRAW");
+        transaction1.setValue(new BigDecimal("101"));
+        transaction1.setDate(LocalDateTime.of(2023, Month.JULY,23,15,0,0));
+        transaction1.setAccount(a);
+        transactionRepository.save(transaction1);
+
+        Transaction transaction2 = new Transaction();
+        transaction2.setTransactionType("WITHDRAW");
+        transaction2.setValue(new BigDecimal("100"));
+        transaction2.setDate(LocalDateTime.of(2023, Month.JULY,24,15,1,0));
+        transaction2.setAccount(a);
+        transactionRepository.save(transaction2);
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+                .get("/bank/transactions/accounts/"+a.getId()+"?" +
+                        "startDate=2023-07-23" +
+                        "&endDate=2023-07-24" +
+                        "&value=101" +
+                        "&transactionType=WITHDRAW")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 
 }
