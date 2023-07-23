@@ -7,11 +7,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity(name="ACCOUNT")
 @Data
-public class Account {
+public class Account implements Serializable {
 
     @Id
     @GeneratedValue

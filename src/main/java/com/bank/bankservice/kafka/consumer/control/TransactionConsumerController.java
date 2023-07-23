@@ -6,7 +6,6 @@ import com.bank.bankservice.transaction.control.TransactionController;
 import com.bank.bankservice.transaction.entity.Transaction;
 import com.bank.bankservice.transaction.entity.TransactionMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +20,7 @@ public class TransactionConsumerController {
     TransactionController transactionController;
 
     @TransactionConsumerListener
-    @SneakyThrows
-    public void create(TransactionMessageRequest message){
+    public void getMessage(TransactionMessageRequest message){
         Transaction transaction = transactionMapper.transactionMessageRequestToTransactionEntity(message);
         transactionController.saveTransaction(transaction);
     }

@@ -20,6 +20,7 @@ public class TransactionMessageRequestDeserializer implements Deserializer<Trans
             if (data == null){
                 return null;
             }
+
             return objectMapper.readValue(new String(data, "UTF-8"), TransactionMessageRequest.class);
         } catch (Exception e) {
             throw new SerializationException("Error when deserializing byte[] to TransactionMessageRequest");
