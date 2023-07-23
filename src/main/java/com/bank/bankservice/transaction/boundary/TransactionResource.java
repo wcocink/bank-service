@@ -45,10 +45,8 @@ public class TransactionResource {
     public ResponseEntity<List<TransactionResponse>> getTransactionsFromAccountIdAndOptionals(@PathVariable String accountId,
                                                                                    @RequestParam @Valid Optional<String> transactionType,
                                                                                    @RequestParam @Valid Optional<BigDecimal> value,
-                                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                                                           Optional<LocalDate> startDate,
-                                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                                                               Optional<LocalDate> endDate) {
+                                                                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<LocalDate> startDate,
+                                                                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<LocalDate> endDate) {
 
         List<TransactionResponse> transactionResponseList = transactionController.getAccountTransactions(accountId, transactionType, value, startDate, endDate);
         if(transactionResponseList.isEmpty()){

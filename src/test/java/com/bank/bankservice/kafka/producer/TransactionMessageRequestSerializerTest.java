@@ -2,19 +2,29 @@ package com.bank.bankservice.kafka.producer;
 
 import com.bank.bankservice.kafka.producer.control.TransactionMessageRequestSerializer;
 import com.bank.bankservice.kafka.producer.entity.TransactionMessageRequest;
+import com.bank.bankservice.utils.AbstractIntegrationTests;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class TransactionMessageRequestSerializerTest {
+public class TransactionMessageRequestSerializerTest extends AbstractIntegrationTests {
+
+    @MockBean
+    KafkaTemplate kafkaTemplate;
+
+    @MockBean
+    KafkaAdmin kafkaAdmin;
 
     @Test
     public void givenValidRequestMessage_ThenSerialize() throws IOException {
